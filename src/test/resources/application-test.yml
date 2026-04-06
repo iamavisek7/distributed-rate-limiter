@@ -1,0 +1,8 @@
+# Overrides for integration tests — Redis host/port are injected by Testcontainers
+rate-limiter:
+  default-algorithm: FIXED_WINDOW
+  rules:
+    - clientId: default
+      algorithm: FIXED_WINDOW
+      limitForPeriod: 100
+      limitRefreshPeriodSeconds: 60

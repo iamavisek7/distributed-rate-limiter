@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: distributed-rate-limiter
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 2000ms
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus, metrics
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+rate-limiter:
+  default-algorithm: FIXED_WINDOW
+  rules:
+    # Fallback rule — applies to any clientId not explicitly listed
+    - clientId: default
+      algorithm: FIXED_WINDOW
+      limitForPeriod: 100
+      limitRefreshPeriodSeconds: 60
+
+    # Sliding window client used in integration tests
+    - clientId: sliding-client
+      algorithm: SLIDING_WINDOW
+      limitForPeriod: 100
+      limitRefreshPeriodSeconds: 60
+
+    # Token bucket client used in integration tests
+    - clientId: token-client
+      algorithm: TOKEN_BUCKET
+      limitForPeriod: 100
+      limitRefreshPeriodSeconds: 60
+
+logging:
+  level:
+    com.ratelimiter: DEBUG
